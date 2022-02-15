@@ -1,4 +1,4 @@
-#include "unistd.h"
+#include "philosophers.h"
 
 #ifndef IS_TEST
 
