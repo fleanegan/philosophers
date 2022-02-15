@@ -10,28 +10,23 @@ SRC_NAME =	main.c \
 
 
 TEST_SRC_NAME = $(shell find $(TEST_PATH) -type f -name "*.c")
+TEST_HEADER_NAME = $(shell find $(TEST_PATH) -type f -name "*.h")
 OBJ_NAME = $(SRC_NAME:.c=.o)
-TEST_OBJ_NAME = $(TEST_SRC_NAME:.c=.o)
 
 # Files
 SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
-TEST_OBJ = $(TEST_OBJ_NAME)
 
 # Flags
-CC = gcc
-CFLAGS = -Wall -Wextra -Werror
-TEST_FLAGS = -g3 -D $(IS_TEST)
+CC			= gcc
+CFLAGS		= -Wall -Wextra -Werror
+TEST_FLAGS	= -g3 -L./criterion-v2.3.3/lib -I./criterion-v2.3.3/include -lcriterion -Wl,-rpath=./criterion-v2.3.3/lib
 
 ifeq ($(MAKECMDGOALS),test)
 	CFLAGS += -D IS_TEST
-else
-	CFLAGS += banan
 endif
 
 all: $(NAME)
-
-
 
 $(NAME): $(OBJ)
 	@echo "Build $(NAME)"
@@ -50,11 +45,9 @@ fclean:	clean
 
 ######################### tests ############################
 
-$(TEST_PATH)%.o: $(TEST_PATH)%.c
-	$(CC) $(CFLAGS) $(TEST_FLAGS) -I$(SRC_PATH) -o $@ -c $<
-
-test: clean $(OBJ) $(TEST_OBJ)
-	@$(CC) -g $(CFLAGS) $(OBJ) $(TEST_OBJ) -o $(NAME)_test
+test: $(OBJ) $(TEST_SRC_NAME) $(TEST_HEADER_NAME)
+	@$(CC) $(TEST_FLAGS) $(CFLAGS) $(OBJ) -I./$(SRC_PATH) $(TEST_SRC_NAME) -o $(NAME)_test
+	@./$(NAME)_test
 
 re:	fclean all
 
