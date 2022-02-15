@@ -1,10 +1,12 @@
+#include <stdio.h>
 #include "philosophers.h"
 
 #ifndef IS_TEST
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	write(1, "no test\n", 5);
+	printf("argc : %d, first %s\n", argc, argv[1]);
+	printf("day time in ms: %lu\n", get_day_ms());
 	return (0);
 }
 

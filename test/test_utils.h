@@ -6,6 +6,9 @@
 # include <unistd.h>
 # include <stdio.h>
 # include "philosophers.h"
+# include "../src/philosophers.h"
+#include "../criterion-v2.3.3/include/criterion/assert.h"
+#include "../criterion-v2.3.3/include/criterion/criterion.h"
 # include <criterion/criterion.h>
 # include <criterion/theories.h>
 # include <criterion/redirect.h>

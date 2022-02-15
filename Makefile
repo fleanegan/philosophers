@@ -7,14 +7,21 @@ TEST_PATH = test/
 
 # Names
 SRC_NAME =	main.c \
+			time.c \
+			init.c \
+			utils.c \
+			parsing.c \
 
+TEST_SRC_NAME = test_main.c
+TEST_HEADER_NAME =	test_parse.h \
+					test_utils.h \
 
-TEST_SRC_NAME = $(shell find $(TEST_PATH) -type f -name "*.c")
-TEST_HEADER_NAME = $(shell find $(TEST_PATH) -type f -name "*.h")
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
 # Files
 SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))
+TEST_SRC = $(addprefix $(TEST_PATH),$(TEST_SRC_NAME))
+TEST_HEADER = $(addprefix $(TEST_PATH),$(TEST_HEADER_NAME))
 OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
 
 # Flags
@@ -43,11 +50,8 @@ clean:
 fclean:	clean
 	@rm -f $(NAME) db
 
-######################### tests ############################
-
-test: $(OBJ) $(TEST_SRC_NAME) $(TEST_HEADER_NAME)
-	@$(CC) $(TEST_FLAGS) $(CFLAGS) $(OBJ) -I./$(SRC_PATH) $(TEST_SRC_NAME) -o $(NAME)_test
-	@./$(NAME)_test
+test: $(OBJ) $(TEST_SRC) $(TEST_HEADER)
+	@$(CC) $(CFLAGS) $(TEST_FLAGS) -o $(NAME)_test $(OBJ) -I./$(SRC_PATH) $(TEST_SRC)
 
 re:	fclean all
 
