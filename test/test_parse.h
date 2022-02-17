@@ -38,17 +38,3 @@ Test(test_parse, more_args_than_five_is_invalid)
 
 	cr_assert_not(is_input_valid(argc, argv));
 }
-
-Test(test_parse, create_shared_data_from_input_string)
-{
-	int		argc = 4;
-	char	*argv[] = {"path", "1", "2", "3", "4"};
-
-	t_philosopher_shared_data	result =	create_philosopher_shared_data( \
-											argc,(const char **) argv);
-
-	cr_assert_eq(result.philo_count, 1);
-	cr_assert_eq(result.time_to_die, 2);
-	cr_assert_eq(result.time_to_eat, 3);
-	cr_assert_eq(result.time_to_sleep, 4);
-}

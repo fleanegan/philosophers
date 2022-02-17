@@ -11,6 +11,8 @@ SRC_NAME =	main.c \
 			init.c \
 			utils.c \
 			parsing.c \
+			philosophizing.c \
+			tear_down.c \
 
 TEST_SRC_NAME = test_main.c
 TEST_HEADER_NAME =	test_parse.h \
@@ -38,7 +40,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	@echo "Build $(NAME)"
 	@echo CFLAGS=${CFLAGS}
-	@$(CC) -g $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CC) -g $(CFLAGS) $(OBJ) -o $(NAME) -lpthread
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	@mkdir -p $(OBJ_PATH)
@@ -51,7 +53,7 @@ fclean:	clean
 	@rm -f $(NAME) db
 
 test: $(OBJ) $(TEST_SRC) $(TEST_HEADER)
-	@$(CC) $(CFLAGS) $(TEST_FLAGS) -o $(NAME)_test $(OBJ) -I./$(SRC_PATH) $(TEST_SRC)
+	@$(CC) $(CFLAGS) $(TEST_FLAGS) -o $(NAME)_test $(OBJ) -I./$(SRC_PATH) $(TEST_SRC) -lpthread
 
 re:	fclean all
 
