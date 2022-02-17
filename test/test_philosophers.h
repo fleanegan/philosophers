@@ -2,27 +2,24 @@
 
 Test(test_philosophers, slow_eating_causes_death)
 {
-	t_test_data	t = set_up_n_philosophers(2);
+	char	**argv = generate_argv(2, 0, 1000, 0);
+	t_local_data	**local = set_up(5, argv);
+	cr_assert_eq(local[0]->shared_data->philo_count, 2);
 
-	t.shared.time_to_die = 0;
-	t.shared.time_to_eat = 1000;
+	run_threads(local[0]->shared_data, local);
 
-	run_threads(&t.shared, t.local);
-
-	cr_assert_eq(t.shared.death_record.value, 1);
-	destroy_muteces(t.local);
+	cr_assert_eq(local[0]->shared_data->death_record.value, 1);
+	destroy_muteces(local[0]->shared_data);
 }
-//printf("address of shared in local %p, real address %p\n", t.local[0].shared_data, &t.shared);
 
-Test(test_philosophers, no_fast_eater_ever_dies)
+Test(test_philosophers, no_fast_eater_ever_dies, .disabled=0)
 {
-	t_test_data	t = set_up_n_philosophers(2);
-	initalize_muteces(&t.shared);
-	t.shared.time_to_die = 1000;
-	t.shared.time_to_eat = 0;
+	char	**argv = generate_argv(2, 1000, 100, 0);
+	t_local_data	**local = set_up(5, argv);
+	cr_assert_eq(local[0]->shared_data->philo_count, 2);
 
-	run_threads(&t.shared, t.local);
+	run_threads(local[0]->shared_data, local);
 
-	cr_assert_eq(t.shared.death_record.value, 0);
-	destroy_muteces(t.local);
+	cr_assert_eq(local[0]->shared_data->death_record.value, 0);
+	destroy_muteces(local[0]->shared_data);
 }

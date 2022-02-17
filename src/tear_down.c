@@ -1,14 +1,24 @@
 #include "philosophers.h"
 
-void destroy_muteces(t_local_data *local_data)
+void destroy_muteces(t_shared_data *shared)
 {
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&local_data->shared_data->death_record.mutex);
-	while (i < local_data->shared_data->philo_count)
+	pthread_mutex_destroy(&shared->death_record.mutex);
+	while (i < shared->philo_count)
 	{
-		pthread_mutex_destroy(&local_data->shared_data->forks[i]);
+		pthread_mutex_destroy(&shared->forks[i]);
 		i++;
 	}
+}
+
+void    free_2d_array(void **mem)
+{
+	void    **sav;
+
+	sav = mem;
+	while (*mem)
+		free(*mem++);
+	free(sav);
 }

@@ -38,3 +38,15 @@ Things to do
 	- in supervisor thread?
 		-> how do we make sure, that variables read by supervisor are not overwritten at same time by philosopher thread?
 			-> could a detached thread be a good idea?
+
+- find out how to use scanf and fread to read line
+- check specific implementation for philosophers parsing
+- go home and try 45 min of rust 
+- fix bug: timestamp flattert, maybe overflow in generate_message while casting unsigned int to int
+
+tomorrow:
+- organize rest of projects in single git repositories
+
+after tomorrow:
+- get git student pack
+

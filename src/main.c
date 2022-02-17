@@ -3,51 +3,53 @@
 
 void	*supervise(void *arg)
 {
-	t_local_data	*local;
+	t_local_data	**local;
 	unsigned int	current_time;
+	unsigned int	last_meal;
+	unsigned int	time_to_die;
 
-	local = (t_local_data *)arg;
+	local = (t_local_data **)arg;
 	while (1)
 	{
 		current_time = get_day_ms();
-		printf("philo count %d\n", local->shared_data->philo_count);
-		for (int i = 0; i < local->shared_data->philo_count - 1; i++) {
-			if (current_time - local[i].time_last_meal > local->shared_data->time_to_die)
+		for (int i = 0; i < local[0]->shared_data->philo_count; i++)
+		{
+			last_meal = local[i]->time_last_meal;
+			time_to_die = local[0]->shared_data->time_to_die;
+			if (last_meal && current_time - last_meal > time_to_die)
 			{
-				printf("philosoph %d died \n", local[i].id);
-				printf("curr %u, last %u, time to die %u\n", current_time, local[i].time_last_meal, local[i].shared_data->time_to_die);
+				printf("philosoph %d died \n", local[i]->id);
+				printf("curr %u, last %u, time to die %u, did not eat since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
+				local[0]->shared_data->death_record.value = local[i]->id;
+				return (arg);
 			}
 			else
-				puts("test");
-		}
-		/*for (int i = 0; i < local[i].shared_data->philo_count; i++)
-			if (current_time - local[i].time_last_meal > local[i].shared_data->time_to_die)
 			{
-				printf("curr %u, last %u, time to die %u\n", current_time, local[i].time_last_meal, local[i].shared_data->time_to_die);
-				printf("philosoph %d died \n", local[i].id);
-				return (arg);
-			}*/
-		usleep(50000000);
+//				printf("curr %u, last %u, time to die %u, did not eat since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
+//				printf("philo no %d did not eat since %u\n", local[i]->id, current_time - last_meal);
+//				puts("\n");
+			}
+		}
+		usleep(5);
 	}
 	(void) current_time;
 	(void) local;
 }
+//		printf("philo count %d\n", local[0]->shared_data->philo_count);
 
-void	run_threads(t_shared_data *shared, t_local_data *local) {
+void	run_threads(t_shared_data *shared, t_local_data **local) {
+	if (! shared || ! local)
+	{
+		puts("run threads received NULL");
+		return ;
+	}
 	pthread_t threadId[shared->philo_count];
-	pthread_t supervisor;
-	for (int i = 0; i < shared->philo_count; i++)
-		local[i].shared_data = shared;
 	initalize_muteces(shared);
 	for (int i = 0; i < shared->philo_count; i++)
-		if (pthread_create(&threadId[i], NULL, philosophizing, &local[i]))
+		if (pthread_create(&threadId[i], NULL, philosophizing, local[i]))
 			puts("error while creating threads");
-	usleep(100);
-	pthread_create(&supervisor, NULL, supervise, local);
-	for (int i = 0; i < shared->philo_count; i++)
-		if ( pthread_detach(threadId[i]))
-			puts("error while joining threads");
-	pthread_join(supervisor, NULL);
+	printf("in programm: address of shared in local %p, real address %p\n", local[0]->shared_data, shared);
+	supervise((void* )local);
 	(void) local;
 	(void) threadId;
 }
