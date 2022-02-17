@@ -14,9 +14,11 @@ SRC_NAME =	main.c \
 			philosophizing.c \
 			tear_down.c \
 
-TEST_SRC_NAME = test_main.c
+TEST_SRC_NAME = test_main.c \
+
 TEST_HEADER_NAME =	test_parse.h \
 					test_utils.h \
+					test_precise_wait.h \
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 
@@ -34,6 +36,11 @@ TEST_FLAGS	= -g3 -L./criterion-v2.3.3/lib -I./criterion-v2.3.3/include -lcriteri
 ifeq ($(MAKECMDGOALS),test)
 	CFLAGS += -D IS_TEST
 endif
+ifeq ($(MAKECMDGOALS),testinc)
+	CFLAGS += -D IS_TEST
+endif
+
+
 
 all: $(NAME)
 
@@ -54,6 +61,9 @@ fclean:	clean
 
 test: $(OBJ) $(TEST_SRC) $(TEST_HEADER)
 	@$(CC) $(CFLAGS) $(TEST_FLAGS) -o $(NAME)_test $(OBJ) -I./$(SRC_PATH) $(TEST_SRC) -lpthread
+
+testinc: $(SRC) $(TEST_SRC) $(TEST_HEADER)
+	@$(CC) $(CFLAGS) $(TEST_FLAGS) -o $(NAME)_test $(SRC) -I./$(SRC_PATH) $(TEST_SRC) -lpthread
 
 re:	fclean all
 

@@ -1,23 +1,51 @@
 #include <stdio.h>
 #include "philosophers.h"
 
-t_shared_data	create_philosopher_shared_data( \
+t_local_data	**set_up(int argc, char** argv)
+{
+	t_shared_data	*shared;
+	t_local_data	**local;
+
+	shared = create_philosopher_shared_data(argc, (const char **) argv);
+	local = malloc(sizeof(t_local_data *) * (shared->philo_count + 1));
+	if (! local)
+		return (NULL);
+	local[shared->philo_count] = NULL;
+	for (int i = 0; i < shared->philo_count; i++)
+	{
+		local[i] = sit_down(shared, i + 1);
+		if (! local[i])
+		{
+			free_2d_array((void **) local);
+			return (NULL);
+		}
+		identify_my_forks(local[i], shared);
+	}
+	return (local);
+}
+
+t_shared_data	*create_philosopher_shared_data( \
 							const int argc, const char **argv)
 {
-	t_shared_data	result;
+	t_shared_data	*result;
 
-	memset(&result, 0, sizeof(result));
-	result.philo_count = ft_atoi_unsigned(argv[1]);
-	result.time_to_die = ft_atoi_unsigned(argv[2]);
-	result.time_to_eat = ft_atoi_unsigned(argv[3]);
-	result.time_to_sleep = ft_atoi_unsigned(argv[4]);
+	result = malloc(sizeof(t_shared_data));
+	if (! result)
+		return (NULL);
+	result->philo_count = ft_atoi_unsigned(argv[1]);
+	result->time_to_die = ft_atoi_unsigned(argv[2]);
+	result->time_to_eat = ft_atoi_unsigned(argv[3]);
+	result->time_to_sleep = ft_atoi_unsigned(argv[4]);
 	if (argc == 5)
-		result.rounds_to_survive = ft_atoi_unsigned(argv[4]);
+		result->rounds_to_survive = ft_atoi_unsigned(argv[4]);
 	else
-		result.rounds_to_survive = 1;
-	result.forks = malloc(sizeof(pthread_mutex_t) * result.philo_count);
-	if (! result.forks)
-		memset(&result, 0, sizeof(result));
+		result->rounds_to_survive = 1;
+	result->forks = malloc(sizeof(pthread_mutex_t) * result->philo_count);
+	if (! result->forks)
+	{
+		free(result);
+		return (NULL);
+	}
 	return (result);
 }
 
@@ -34,11 +62,17 @@ void initalize_muteces(t_shared_data *shared)
 	}
 }
 
-t_local_data	sit_down(t_shared_data *data, int id)
+t_local_data	*sit_down(t_shared_data *data, int id)
 {
-	t_local_data	result;
-	result.id = id;
-	result.shared_data = data;
+	t_local_data	*result;
+
+	result = malloc(sizeof(t_local_data));
+	if (! result)
+		return (NULL);
+	result->id = id;
+	result->shared_data = data;
+	result->time_init = 0;
+	result->time_last_meal = 0;
 	return (result);
 }
 

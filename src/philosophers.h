@@ -7,6 +7,7 @@
 # include <string.h>
 # include <pthread.h>
 # define MAX_THREADS 300
+# define SPACE_NULLTERMIN 1
 
 typedef struct s_shared_int
 {
@@ -37,18 +38,27 @@ typedef struct s_philosopher_local_data
 
 //
 void	*philosophizing(void * arg);
-void	run_threads(t_shared_data *shared, t_local_data *local);
+void	run_threads(t_shared_data *shared, t_local_data **local);
 
 // time
 unsigned int	get_day_ms(void);
+unsigned int	get_day_us(void);
+void			precise_wait(int i);
+
+// printing
+int				print_message(t_local_data *data, const char *message);
+void    		ft_putnbr_fd(int nb, int fd);
+void    		ft_fast_putstr(char *str);
+char			*generate_message(t_local_data *local, const char *message);
 
 // parsing
 int				is_input_valid(int argc, char **argv);
 
 // init
-t_shared_data	create_philosopher_shared_data( \
+t_local_data	**set_up(int argc, char** argv);
+t_shared_data * create_philosopher_shared_data( \
 				int argc, const char **argv);
-t_local_data	sit_down(t_shared_data *data, int id);
+t_local_data * sit_down(t_shared_data *data, int id);
 void			identify_my_forks(t_local_data *local, \
 				t_shared_data *shared);
 void initalize_muteces(t_shared_data *shared);
@@ -56,8 +66,10 @@ void initalize_muteces(t_shared_data *shared);
 // helpers
 int				ft_isdigit(int c);
 int				ft_atoi_unsigned(const char *in);
+char			*ft_itoa(int i);
 
 // tear down
-void destroy_muteces(t_local_data *local_data);
+void			destroy_muteces(t_shared_data *shared);
+void			free_2d_array(void **mem);
 
 #endif //PHILOSOPHERS_H
