@@ -1,6 +1,6 @@
 #include "philosophers.h"
 
-unsigned long	get_day_ms(void)
+unsigned int	get_day_ms(void)
 {
 	struct timeval tmp;
 	gettimeofday(&tmp, NULL);

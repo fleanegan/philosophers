@@ -23,7 +23,7 @@ philosophers
 		-> right fork = i < n ? i+1 : 0
 		-> forks are not allowed to have same address!
 	- has someone died?
-- philosophers do not talk to each other BUT they do avoid do die
+- philosophers do not talk to each other BUT they do avoid do die_if_necessary
 	-> we cannot efficiently distribute the forks, can we?
 	-> but we can influence the rhythm the philosophers change their state
 - printing:
@@ -32,12 +32,9 @@ philosophers
 Things to do
 -----------
 
-- generate data packages before creating threads
-	- shared data
-	- local data
-- parse input arguments into number and time
-	- make sure that there are only digits
-	- no negative values allowed
-	- how is the spacing?
-	- did the user provide enough arguments?
-	- if we got only one philosopher, make sure he dies
+- determin death:
+	- in philosopher itself?
+		-> how do we wait for lock and check for death at same time?
+	- in supervisor thread?
+		-> how do we make sure, that variables read by supervisor are not overwritten at same time by philosopher thread?
+			-> could a detached thread be a good idea?
