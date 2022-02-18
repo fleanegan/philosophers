@@ -72,7 +72,7 @@ static char     *allocate_memory_and_zero_init(char **result,
 											   int digits_to_hold_number);
 static int      calc_digits_in_number(int in);
 
-int	print_message(t_local_data *local, const char *message)
+int print_message(t_local_data *local, const char *message, int force_printing)
 {
 	unsigned int	time_since_zero;
 	char			result[100];
@@ -92,9 +92,18 @@ int	print_message(t_local_data *local, const char *message)
 	current_len = ft_strlcat(result, message, current_len + ft_strlen(message) + 1);
 	free(philosoph_id_str);
 	free(time_str);
-	if (! local->shared_data || ! local->shared_data->death_record)
+	if (force_printing)
+	{
 		ft_fast_putstr(result);
-	return (1);
+		return (0);
+	}
+	if (! local->shared_data->death_record)
+	{
+		pthread_mutex_lock(&local->shared_data->print_token);
+		ft_fast_putstr(result);
+		pthread_mutex_unlock(&local->shared_data->print_token);
+	}
+	return (0);
 }
 
 char    *ft_itoa(int n)

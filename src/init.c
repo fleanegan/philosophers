@@ -32,6 +32,7 @@ t_shared_data	*create_philosopher_shared_data( \
 	result = malloc(sizeof(t_shared_data));
 	if (! result)
 		return (NULL);
+	result->death_record = 0;
 	result->philo_count = ft_atoi_unsigned(argv[1]);
 	result->time_to_die = ft_atoi_unsigned(argv[2]);
 	result->time_to_eat = ft_atoi_unsigned(argv[3]);
@@ -54,7 +55,6 @@ void initalize_muteces(t_shared_data *shared)
 	int	i;
 
 	i = 0;
-	pthread_mutex_init(&shared->death_record.mutex, NULL);
 	pthread_mutex_init(&shared->print_token, NULL);
 	while (i < shared->philo_count)
 	{
