@@ -1,8 +1,46 @@
 #include <stdio.h>
 #include "philosophers.h"
 
-void	eat(t_local_data *data);
 void	init(const void *arg, t_local_data **data);
+void	wait_every_other_round();
+void	eating(t_local_data *data);
+void	sleeping(t_local_data *data);
+void	thinking(t_local_data *data);
+
+void * philosophizing(void * arg)
+{
+	t_local_data	*data;
+
+	init(arg, &data);
+	while (1)
+	{
+		thinking(data);
+		wait_every_other_round();
+		eating(data);
+		sleeping(data);
+	}
+	return (arg);
+}
+
+void eating(t_local_data *data)
+{
+	pthread_mutex_lock(data->left_fork);
+	pthread_mutex_lock(data->right_fork);
+	data->time_last_meal = get_day_ms();
+	pthread_mutex_lock(&data->shared_data->print_token);
+	print_message(data, "is eating\n");
+	pthread_mutex_unlock(&data->shared_data->print_token);
+	precise_wait(data->shared_data->time_to_eat);
+	pthread_mutex_unlock(data->left_fork);
+	pthread_mutex_unlock(data->right_fork);
+}
+
+void	init(const void *arg, t_local_data **data)
+{
+	*data = (t_local_data*) arg;
+	(*data)->time_init = get_day_ms();
+	(*data)->time_last_meal = (*data)->time_init;
+}
 
 void	wait_every_other_round()
 {
@@ -15,39 +53,18 @@ void	wait_every_other_round()
 		solidarity_switch = 0;
 	}
 }
-void * philosophizing(void * arg)
-{
-	t_local_data	*data;
 
-	init(arg, &data);
-	while (1)
-	{
-		wait_every_other_round();
-		eat(data);
-	}
-	return (arg);
+void	sleeping(t_local_data *data)
+{
+	pthread_mutex_lock(&data->shared_data->print_token);
+	print_message(data, "is sleeping\n");
+	pthread_mutex_unlock(&data->shared_data->print_token);
+	precise_wait(data->shared_data->time_to_sleep);
 }
 
-void eat(t_local_data *data)
+void	thinking(t_local_data *data)
 {
-	pthread_mutex_lock(data->left_fork);
-	pthread_mutex_lock(data->right_fork);
-	unsigned int	tmp = data->time_last_meal;
-	data->time_last_meal = get_day_ms();
-	ft_putnbr_fd((int) (data->time_last_meal - tmp), 1);
-	print_message(data, "is eating\n");
-	//	printf("philosopher %d has started eating %u ms after start, which is %u after last meal\n",
-//		   data->id, get_day_ms() - data->time_init, data->time_last_meal - tmp);
-//		printf("	and took fork %p and %p \n", data->left_fork,
-//			   data->right_fork);
-	usleep(data->shared_data->time_to_eat * 1000);
-	pthread_mutex_unlock(data->left_fork);
-	pthread_mutex_unlock(data->right_fork);
-}
-
-void init(const void *arg, t_local_data **data)
-{
-	*data = (t_local_data*) arg;
-	(*data)->time_init = get_day_ms();
-	(*data)->time_last_meal = (*data)->time_init;
+	pthread_mutex_lock(&data->shared_data->print_token);
+	print_message(data, "is thinking\n");
+	pthread_mutex_unlock(&data->shared_data->print_token);
 }

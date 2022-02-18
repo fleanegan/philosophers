@@ -6,6 +6,7 @@ void destroy_muteces(t_shared_data *shared)
 
 	i = 0;
 	pthread_mutex_destroy(&shared->death_record.mutex);
+	pthread_mutex_destroy(&shared->print_token);
 	while (i < shared->philo_count)
 	{
 		pthread_mutex_destroy(&shared->forks[i]);

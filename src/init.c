@@ -55,6 +55,7 @@ void initalize_muteces(t_shared_data *shared)
 
 	i = 0;
 	pthread_mutex_init(&shared->death_record.mutex, NULL);
+	pthread_mutex_init(&shared->print_token, NULL);
 	while (i < shared->philo_count)
 	{
 		pthread_mutex_init(&shared->forks[i], NULL);
