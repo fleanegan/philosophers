@@ -33,7 +33,7 @@ typedef struct s_philosopher_local_data
 
 //
 void	*philosophizing(void * arg);
-void	run_threads(t_shared_data *shared, t_local_data **local);
+void run_threads(t_local_data **local);
 
 // time
 unsigned int	get_day_ms(void);
@@ -41,7 +41,7 @@ unsigned int	get_day_us(void);
 void			precise_wait(int i);
 
 // printing
-int				print_message(t_local_data *data, const char *message);
+int print_message(t_local_data *local, const char *message, int force_printing);
 void    		ft_putnbr_fd(int nb, int fd);
 void    		ft_fast_putstr(char *str);
 

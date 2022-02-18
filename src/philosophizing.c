@@ -27,9 +27,7 @@ void eating(t_local_data *data)
 	pthread_mutex_lock(data->left_fork);
 	pthread_mutex_lock(data->right_fork);
 	data->time_last_meal = get_day_ms();
-	pthread_mutex_lock(&data->shared_data->print_token);
-	print_message(data, "is eating\n");
-	pthread_mutex_unlock(&data->shared_data->print_token);
+	print_message(data, "is eating\n", 0);
 	precise_wait(data->shared_data->time_to_eat);
 	pthread_mutex_unlock(data->left_fork);
 	pthread_mutex_unlock(data->right_fork);
@@ -56,15 +54,11 @@ void	wait_every_other_round()
 
 void	sleeping(t_local_data *data)
 {
-	pthread_mutex_lock(&data->shared_data->print_token);
-	print_message(data, "is sleeping\n");
-	pthread_mutex_unlock(&data->shared_data->print_token);
+	print_message(data, "is sleeping\n", 0);
 	precise_wait(data->shared_data->time_to_sleep);
 }
 
 void	thinking(t_local_data *data)
 {
-	pthread_mutex_lock(&data->shared_data->print_token);
-	print_message(data, "is thinking\n");
-	pthread_mutex_unlock(&data->shared_data->print_token);
+	print_message(data, "is thinking\n", 0);
 }

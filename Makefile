@@ -40,8 +40,6 @@ ifeq ($(MAKECMDGOALS),testinc)
 	CFLAGS += -D IS_TEST
 endif
 
-
-
 all: $(NAME)
 
 $(NAME): $(OBJ)
@@ -51,7 +49,7 @@ $(NAME): $(OBJ)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	@mkdir -p $(OBJ_PATH)
-	$(CC) $(CFLAGS) -I$(SRC_PATH) -o $@ -c $<
+	$(CC) $(CFLAGS) -g -I$(SRC_PATH) -o $@ -c $<
 
 clean:
 	@rm -rf $(OBJ_PATH) db
