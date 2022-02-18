@@ -9,12 +9,6 @@
 # define MAX_THREADS 300
 # define SPACE_NULLTERMIN 1
 
-typedef struct s_shared_int
-{
-	pthread_mutex_t	mutex;
-	int				value;
-}	t_shared_int;
-
 typedef struct s_philosopher_shared_data
 {
 	int				philo_count;
@@ -23,7 +17,8 @@ typedef struct s_philosopher_shared_data
 	unsigned int	time_to_eat;
 	unsigned int	time_to_die;
 	pthread_mutex_t	*forks;
-	t_shared_int	death_record;
+	pthread_mutex_t	print_token;
+	int				death_record;
 } 	t_shared_data;
 
 typedef struct s_philosopher_local_data
@@ -49,7 +44,6 @@ void			precise_wait(int i);
 int				print_message(t_local_data *data, const char *message);
 void    		ft_putnbr_fd(int nb, int fd);
 void    		ft_fast_putstr(char *str);
-char			*generate_message(t_local_data *local, const char *message);
 
 // parsing
 int				is_input_valid(int argc, char **argv);

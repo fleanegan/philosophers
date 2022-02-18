@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "philosophers.h"
 
 int	ft_isdigit(int c)
@@ -71,16 +72,15 @@ static char     *allocate_memory_and_zero_init(char **result,
 											   int digits_to_hold_number);
 static int      calc_digits_in_number(int in);
 
-char * generate_message(t_local_data *local, const char *message)
+int	print_message(t_local_data *local, const char *message)
 {
 	unsigned int	time_since_zero;
-	char			*result;
+	char			result[100];
 	char			*time_str;
 	char			*philosoph_id_str;
 	size_t			current_len;
 
 	current_len = 7;
-	result = malloc(sizeof(char) * 100);
 	memset(result, '0', sizeof(char) * 100);
 	time_since_zero = get_day_ms() - local->time_init;
 	time_str = ft_itoa(time_since_zero);
@@ -90,25 +90,10 @@ char * generate_message(t_local_data *local, const char *message)
 	current_len = ft_strlcat(result, philosoph_id_str, current_len + ft_strlen(philosoph_id_str) + 2);
 	current_len = ft_strlcat(result, " ", current_len + ft_strlen(" ") + 1);
 	current_len = ft_strlcat(result, message, current_len + ft_strlen(message) + 1);
-
 	free(philosoph_id_str);
 	free(time_str);
-
-	return result;
-	(void) local;
-	(void) time_since_zero;
-	(void) message;
-	(void) philosoph_id_str;
-}
-
-int	print_message(t_local_data *data, const char *message)
-{
-	char	*result = generate_message(data, message);
-
-	if (! result)
-		return (0);
-	ft_fast_putstr(result);
-	free(result);
+	if (! local->shared_data || ! local->shared_data->death_record)
+		ft_fast_putstr(result);
 	return (1);
 }
 
