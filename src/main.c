@@ -34,7 +34,7 @@ void	*supervise(void *arg)
 void run_threads(t_local_data **local)
 {
 	pthread_t threadId[local[0]->shared_data->philo_count];
-	initalize_muteces(local[0]->shared_data);
+	initalize_muteces(local[0]->shared_data, *local);
 	for (int i = 0; i < local[0]->shared_data->philo_count; i++)
 		if (pthread_create(&threadId[i], NULL, philosophizing, local[i]))
 			puts("error while creating threads");

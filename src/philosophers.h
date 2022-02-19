@@ -9,13 +9,6 @@
 # define MAX_THREADS 300
 # define SPACE_NULLTERMIN 1
 
-typedef struct s_shared_uint
-{
-	pthread_mutex_t mutex;
-	unsigned int	value;
-}       t_shared_uint;
-
-
 typedef struct s_philosopher_shared_data
 {
 	int				philo_count;
@@ -33,7 +26,7 @@ typedef struct s_philosopher_local_data
 	int				id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	t_shared_uint	time_last_meal;
+	unsigned int	time_last_meal;
 	unsigned int	time_init;
 	t_shared_data	*shared_data;
 }	t_local_data;
