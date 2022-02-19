@@ -50,7 +50,7 @@ t_shared_data	*create_philosopher_shared_data( \
 	return (result);
 }
 
-void initalize_muteces(t_shared_data *shared)
+void initalize_muteces(t_shared_data *shared, t_local_data *local)
 {
 	int	i;
 
@@ -61,6 +61,7 @@ void initalize_muteces(t_shared_data *shared)
 		pthread_mutex_init(&shared->forks[i], NULL);
 		i++;
 	}
+	(void) local;
 }
 
 t_local_data	*sit_down(t_shared_data *data, int id)
@@ -73,7 +74,8 @@ t_local_data	*sit_down(t_shared_data *data, int id)
 	result->id = id;
 	result->shared_data = data;
 	result->time_init = 0;
-	result->time_last_meal = 0;
+	result->time_last_meal.value = 0;
+	pthread_mutex_init(&(result->time_last_meal.mutex), NULL);
 	return (result);
 }
 
