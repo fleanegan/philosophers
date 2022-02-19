@@ -3,7 +3,6 @@
 
 void	*supervise(void *arg)
 {
-	///*
 	t_local_data	**local;
 	unsigned int	current_time;
 	unsigned int	last_meal;
@@ -23,16 +22,13 @@ void	*supervise(void *arg)
 				local[0]->shared_data->death_record = local[i]->id;
 				print_message(local[i], "died\n", 1);
 				pthread_mutex_unlock(&local[i]->shared_data->print_token);
-				printf("curr %u, last %u, time to die %u, did not eating since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
+				//printf("curr %u, last %u, time to die %u, did not eating since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
 				return (arg);
 			}
 			//else printf("curr %u, last %u, time to die %u, did not eating since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
 		}
 		usleep(5);
 	}
-	//*/
-	sleep(3);
-	return (arg);
 }
 
 void run_threads(t_local_data **local)
