@@ -84,10 +84,14 @@ void	identify_my_forks(t_local_data *local, t_shared_data *shared)
 
 	right_id = local->id - 1;
 	left_id = (local->id) % shared->philo_count;
-	local->right_fork = &shared->forks[right_id];
+	local->right_fork = &shared->forks[left_id];
+	local->left_fork = &shared->forks[right_id];
+	if (local->id == 0)
+	{
+		local->right_fork = &shared->forks[right_id];
+		local->left_fork = &shared->forks[left_id];
+	}
 	if (right_id == left_id)
 		local->left_fork = NULL;
-	else
-		local->left_fork = &shared->forks[left_id];
 }
 // 	printf("own id: %d, left: %d, right: %d\n", local->id, left_id, right_id);
