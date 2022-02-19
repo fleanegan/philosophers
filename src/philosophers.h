@@ -9,6 +9,13 @@
 # define MAX_THREADS 300
 # define SPACE_NULLTERMIN 1
 
+typedef struct s_shared_uint
+{
+	pthread_mutex_t mutex;
+	unsigned int	value;
+}       t_shared_uint;
+
+
 typedef struct s_philosopher_shared_data
 {
 	int				philo_count;
@@ -26,7 +33,7 @@ typedef struct s_philosopher_local_data
 	int				id;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	unsigned int	time_last_meal;
+	t_shared_uint	time_last_meal;
 	unsigned int	time_init;
 	t_shared_data	*shared_data;
 }	t_local_data;
@@ -55,7 +62,7 @@ t_shared_data * create_philosopher_shared_data( \
 t_local_data * sit_down(t_shared_data *data, int id);
 void			identify_my_forks(t_local_data *local, \
 				t_shared_data *shared);
-void initalize_muteces(t_shared_data *shared);
+void initalize_muteces(t_shared_data *shared, t_local_data *local);
 
 // helpers
 int				ft_isdigit(int c);
