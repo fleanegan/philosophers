@@ -80,9 +80,11 @@ int print_message(t_local_data *local, const char *message, int force_printing)
 	char			*philosoph_id_str;
 	size_t			current_len;
 
+	time_since_zero = get_day_ms() - local->time_init;
+	//printf("%u\n", time_since_zero);
+	//return 1;
 	current_len = 7;
 	memset(result, '0', sizeof(char) * 100);
-	time_since_zero = get_day_ms() - local->time_init;
 	time_str = ft_itoa(time_since_zero);
 	ft_strlcpy(result + 7 - ft_strlen(time_str), time_str, ft_strlen(time_str) + 1);
 	current_len = ft_strlcat(result, " philosopher ", current_len + ft_strlen(" philosopher ") + 1);

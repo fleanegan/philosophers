@@ -1,5 +1,5 @@
 //#include "test_parse.h"
 //#include "test_init.h"
-#include "test_philosophers.h"
-//#include "test_precise_wait.h"
+//#include "test_philosophers.h"
+#include "test_precise_wait.h"
 //#include "test_output.h"
