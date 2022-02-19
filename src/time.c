@@ -19,6 +19,6 @@ void precise_wait(int i)
 {
 	unsigned int	start = get_day_ms();
 	while (get_day_ms() != start + i)
-		usleep(1);
+		usleep(100);
 	(void) i;
 }

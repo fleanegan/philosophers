@@ -81,7 +81,7 @@ int print_message(t_local_data *local, const char *message, int force_printing)
 	size_t			current_len;
 
 	current_len = 7;
-	memset(result, '0', sizeof(char) * 100);
+	memset(result, '0', sizeof(char) * 10);
 	time_since_zero = get_day_ms() - local->time_init;
 	time_str = ft_itoa(time_since_zero);
 	ft_strlcpy(result + 7 - ft_strlen(time_str), time_str, ft_strlen(time_str) + 1);
@@ -99,9 +99,7 @@ int print_message(t_local_data *local, const char *message, int force_printing)
 	}
 	if (! local->shared_data->death_record)
 	{
-		pthread_mutex_lock(&local->shared_data->print_token);
 		ft_fast_putstr(result);
-		pthread_mutex_unlock(&local->shared_data->print_token);
 	}
 	return (0);
 }
