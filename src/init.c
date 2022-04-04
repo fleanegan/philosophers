@@ -1,31 +1,51 @@
-#include <stdio.h>
 #include "philosophers.h"
 
-t_local_data	**set_up(int argc, char** argv)
+int	arrange_philo_with_forks(t_shared_data **shared, t_local_data **local)
+{
+	int	i;
+
+	i = 0;
+	if (pthread_mutex_init(&(*shared)->general_lock, NULL))
+		return (1);
+	while (i < (*shared)->philo_count)
+	{
+		if (pthread_mutex_init(&(*shared)->forks[i], NULL))
+			return (1);
+		local[i] = sit_down((*shared), i + 1);
+		if (! local[i])
+			return (1);
+		identify_my_forks(local[i], (*shared));
+		i++;
+	}
+	return (0);
+}
+
+t_local_data	**set_up(int argc, char **argv)
 {
 	t_shared_data	*shared;
 	t_local_data	**local;
 
 	shared = create_philosopher_shared_data(argc, (const char **) argv);
-	local = malloc(sizeof(t_local_data *) * (shared->philo_count + 1));
-	if (! local)
+	if (shared == NULL)
 		return (NULL);
-	local[shared->philo_count] = NULL;
-	for (int i = 0; i < shared->philo_count; i++)
+	local = malloc(sizeof(t_local_data *) * (shared->philo_count + 1));
+	if (local == NULL)
 	{
-		local[i] = sit_down(shared, i + 1);
-		if (! local[i])
-		{
-			free_2d_array((void **) local);
-			return (NULL);
-		}
-		identify_my_forks(local[i], shared);
+		free_shared(&shared);
+		return (NULL);
+	}
+	local[shared->philo_count] = NULL;
+	if (arrange_philo_with_forks(&shared, local))
+	{
+		free_2d_array((void **) local);
+		free(shared);
+		return (NULL);
 	}
 	return (local);
 }
 
 t_shared_data	*create_philosopher_shared_data( \
-							const int argc, const char **argv)
+				const int argc, const char **argv)
 {
 	t_shared_data	*result;
 
@@ -34,11 +54,11 @@ t_shared_data	*create_philosopher_shared_data( \
 		return (NULL);
 	result->death_record = 0;
 	result->philo_count = ft_atoi_unsigned(argv[1]);
-	result->time_to_die = ft_atoi_unsigned(argv[2]);
-	result->time_to_eat = ft_atoi_unsigned(argv[3]);
-	result->time_to_sleep = ft_atoi_unsigned(argv[4]);
-	if (argc == 5)
-		result->rounds_to_survive = ft_atoi_unsigned(argv[4]);
+	result->time_to_die = ft_atoi_unsigned(argv[2]) * 1000;
+	result->time_to_eat = ft_atoi_unsigned(argv[3]) * 1000;
+	result->time_to_sleep = ft_atoi_unsigned(argv[4]) * 1000;
+	if (argc == 6)
+		result->rounds_to_survive = ft_atoi_unsigned(argv[5]);
 	else
 		result->rounds_to_survive = 1;
 	result->forks = malloc(sizeof(pthread_mutex_t) * result->philo_count);
@@ -48,20 +68,6 @@ t_shared_data	*create_philosopher_shared_data( \
 		return (NULL);
 	}
 	return (result);
-}
-
-void initalize_muteces(t_shared_data *shared, t_local_data *local)
-{
-	int	i;
-
-	i = 0;
-	pthread_mutex_init(&shared->print_token, NULL);
-	while (i < shared->philo_count)
-	{
-		pthread_mutex_init(&shared->forks[i], NULL);
-		i++;
-	}
-	(void) local;
 }
 
 t_local_data	*sit_down(t_shared_data *data, int id)
@@ -75,6 +81,7 @@ t_local_data	*sit_down(t_shared_data *data, int id)
 	result->shared_data = data;
 	result->time_init = 0;
 	result->time_last_meal = 0;
+	result->meal_count = 0;
 	return (result);
 }
 
@@ -85,14 +92,13 @@ void	identify_my_forks(t_local_data *local, t_shared_data *shared)
 
 	right_id = local->id - 1;
 	left_id = (local->id) % shared->philo_count;
-	local->right_fork = &shared->forks[left_id];
-	local->left_fork = &shared->forks[right_id];
-	if (local->id == 0)
+	local->right_fork = &shared->forks[right_id];
+	local->left_fork = &shared->forks[left_id];
+	if (local->id % 2 == 0)
 	{
-		local->right_fork = &shared->forks[right_id];
-		local->left_fork = &shared->forks[left_id];
+		local->right_fork = &shared->forks[left_id];
+		local->left_fork = &shared->forks[right_id];
 	}
 	if (right_id == left_id)
 		local->left_fork = NULL;
 }
-// 	printf("own id: %d, left: %d, right: %d\n", local->id, left_id, right_id);

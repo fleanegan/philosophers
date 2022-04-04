@@ -1,44 +1,97 @@
 #include <stdio.h>
 #include "philosophers.h"
 
-void	*supervise(void *arg)
-{
-	t_local_data	**local;
-	unsigned int	current_time;
-	unsigned int	last_meal;
-	unsigned int	time_to_die;
+int	update_death_record(t_local_data *local);
 
-	local = (t_local_data **)arg;
+int	is_done(t_local_data **local);
+
+void	*supervise(t_local_data **local)
+{
+	int				tmp;
+
 	while (1)
 	{
-		for (int i = 0; i < local[0]->shared_data->philo_count; i++)
+		pthread_mutex_lock(&local[0]->shared_data->general_lock);
+		tmp = update_death_record(*local);
+		pthread_mutex_unlock(&local[0]->shared_data->general_lock);
+		if (tmp != 0)
 		{
-			last_meal = local[i]->time_last_meal;
-			time_to_die = local[0]->shared_data->time_to_die;
-			current_time = get_day_ms();
-			if (last_meal && current_time - last_meal > time_to_die)
-			{
-				pthread_mutex_lock(&local[i]->shared_data->print_token);
-				local[0]->shared_data->death_record = local[i]->id;
-				print_message(local[i], "died\n", 1);
-				pthread_mutex_unlock(&local[i]->shared_data->print_token);
-				//printf("curr %u, last %u, time to die %u, did not eating since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
-				return (arg);
-			}
-			//else printf("curr %u, last %u, time to die %u, did not eating since %u\n", current_time, last_meal, time_to_die, current_time - last_meal);
+			print_message(*(local + tmp - 1), "died\n");
+			return (local);
 		}
-		usleep(5);
+		if (is_done(local))
+		{
+			ft_fast_putstr("everybody ate\n");
+			return (local);
+		}
+		pthread_mutex_unlock(&local[0]->shared_data->general_lock);
+		usleep(500);
 	}
 }
 
-void run_threads(t_local_data **local)
+int	is_done(t_local_data **local)
 {
-	pthread_t threadId[local[0]->shared_data->philo_count];
-	initalize_muteces(local[0]->shared_data, *local);
-	for (int i = 0; i < local[0]->shared_data->philo_count; i++)
-		if (pthread_create(&threadId[i], NULL, philosophizing, local[i]))
-			puts("error while creating threads");
-	supervise((void* )local);
+	int	i;
+
+	i = 0;
+	while (i < local[0]->shared_data->philo_count)
+	{
+		if (local[i]->meal_count < local[0]->shared_data->rounds_to_survive)
+			return (0);
+		i++;
+	}
+	local[0]->shared_data->death_record = -1;
+	return (1);
+}
+
+int	update_death_record(t_local_data *local)
+{
+	int				i;
+	unsigned long	last_meal;
+	unsigned long	time_to_die;
+	unsigned long	now;
+
+	i = 0;
+	while (i < local[0].shared_data->philo_count)
+	{
+		last_meal = local->time_last_meal;
+		time_to_die = local->shared_data->time_to_die;
+		now = us_since_start(local);
+		fflush(stdout);
+		if (last_meal && now - last_meal > time_to_die)
+		{
+			local->shared_data->death_record = local->id;
+			return (local->id);
+		}
+		i++;
+	}
+	return (0);
+}
+
+int	run_threads(t_local_data **local)
+{
+	pthread_t	*thread_ids;
+	int			i;
+
+	i = -1;
+	thread_ids = malloc(sizeof(pthread_t) * local[0]->shared_data->philo_count);
+	if (thread_ids == NULL)
+		return (1);
+	pthread_mutex_lock(&local[0]->shared_data->general_lock);
+	ft_fast_putstr("reached thread\n");
+	while (++i < local[0]->shared_data->philo_count)
+		if (pthread_create(\
+			&thread_ids[i], NULL, philosophizing, local[i]))
+			ft_fast_putstr("error while creating threads");
+	local[0]->shared_data->time_start = get_day_us();
+	pthread_mutex_unlock(&local[0]->shared_data->general_lock);
+	supervise(local);
+	i = -1;
+	while (++i < local[0]->shared_data->philo_count)
+		if (pthread_join(thread_ids[i], NULL))
+			ft_fast_putstr("error while joining threads");
+	free(thread_ids);
+	return (0);
 }
 
 #ifndef IS_TEST
@@ -50,12 +103,14 @@ int	main(int argc, char **argv)
 	if (! is_input_valid(argc, argv))
 		return (1);
 	ft_fast_putstr("is valid\n");
-	local = set_up(5, argv);
+	local = set_up(argc, argv);
 	ft_fast_putstr("set up done\n");
 	if (! local)
 		return (1);
-	ft_fast_putstr("reached thread\n");
 	run_threads(local);
+	destroy_muteces(local[0]->shared_data);
+	free_shared(&local[0]->shared_data);
+	free_2d_array((void **) local);
 	return (0);
 }
 

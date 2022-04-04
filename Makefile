@@ -9,7 +9,9 @@ TEST_PATH = test/
 SRC_NAME =	main.c \
 			time.c \
 			init.c \
-			utils.c \
+			utils/str_utils.c \
+			utils/atoi_utils.c \
+			utils/itoa_utils.c \
 			parsing.c \
 			philosophizing.c \
 			tear_down.c \
@@ -42,13 +44,13 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) $(SRC)
 	@echo "Build $(NAME)"
 	@echo CFLAGS=${CFLAGS}
 	@$(CC) -g $(CFLAGS) $(OBJ) -o $(NAME) -lpthread
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
-	@mkdir -p $(OBJ_PATH)
+	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -g -I$(SRC_PATH) -o $@ -c $<
 
 clean:

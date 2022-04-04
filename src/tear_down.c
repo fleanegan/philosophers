@@ -1,11 +1,11 @@
 #include "philosophers.h"
 
-void destroy_muteces(t_shared_data *shared)
+void	destroy_muteces(t_shared_data *shared)
 {
 	int	i;
 
 	i = 0;
-	pthread_mutex_destroy(&shared->print_token);
+	pthread_mutex_destroy(&shared->general_lock);
 	while (i < shared->philo_count)
 	{
 		pthread_mutex_destroy(&shared->forks[i]);
@@ -13,12 +13,21 @@ void destroy_muteces(t_shared_data *shared)
 	}
 }
 
-void    free_2d_array(void **mem)
+void	free_2d_array(void **mem)
 {
-	void    **sav;
+	void	**sav;
 
 	sav = mem;
+	if (mem == NULL)
+		return ;
 	while (*mem)
 		free(*mem++);
 	free(sav);
+}
+
+void	free_shared(t_shared_data **in)
+{
+	free_2d_array((void **)(*in)->forks);
+	free(*in);
+	*in = NULL;
 }
