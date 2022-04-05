@@ -116,7 +116,7 @@ int	main(int argc, char **argv)
 	local = set_up(argc, argv);
 	if (! local)
 	{
-		ft_fast_putstr("error");
+		ft_fast_putstr("error\n");
 		return (1);
 	}
 	run_threads(local);

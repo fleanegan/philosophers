@@ -77,7 +77,7 @@ t_shared_data	*create_philosopher_shared_data( \
 		result->forks = malloc(sizeof(pthread_mutex_t) * result->philo_count);
 	if (result->forks == NULL || result->time_to_die < 60000 \
 		|| result->time_to_sleep < 60000 || result->time_to_eat < 60000 \
-		|| result->rounds_to_survive == 0)
+		|| result->rounds_to_survive == 0 || result->philo_count > MAX_THREADS)
 	{
 		free(result->forks);
 		free(result);
