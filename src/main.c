@@ -115,7 +115,10 @@ int	main(int argc, char **argv)
 		return (1);
 	local = set_up(argc, argv);
 	if (! local)
+	{
+		ft_fast_putstr("error");
 		return (1);
+	}
 	ft_fast_putstr("set up done\n");
 	run_threads(local);
 	destroy_muteces(local[0]->shared_data);

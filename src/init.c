@@ -79,7 +79,7 @@ t_shared_data	*create_philosopher_shared_data( \
 		|| result->time_to_sleep < 60000 || result->time_to_eat < 60000 \
 		|| result->rounds_to_survive == 0)
 	{
-		ft_fast_putstr("error");
+		free(result->forks);
 		free(result);
 		return (NULL);
 	}
