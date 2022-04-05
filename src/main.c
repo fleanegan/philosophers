@@ -32,10 +32,7 @@ void	*supervise(t_local_data **local)
 			return (local);
 		}
 		if (is_done(local))
-		{
-			ft_fast_putstr("everybody ate\n");
 			return (local);
-		}
 		pthread_mutex_unlock(&local[0]->shared_data->general_lock);
 		usleep(500);
 	}
@@ -119,7 +116,6 @@ int	main(int argc, char **argv)
 		ft_fast_putstr("error");
 		return (1);
 	}
-	ft_fast_putstr("set up done\n");
 	run_threads(local);
 	destroy_muteces(local[0]->shared_data);
 	free_shared(&local[0]->shared_data);
