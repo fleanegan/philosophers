@@ -101,8 +101,7 @@ int	thinking(t_local_data *data)
 		print_message(data, "is thinking\n");
 	pthread_mutex_unlock(&(data)->shared_data->general_lock);
 	if (data->shared_data->philo_count % 2 && data->meal_count > 0)
-		usleep(2 * data->shared_data->time_to_eat \
-				+ data->shared_data->time_to_sleep \
+		usleep(3 * data->shared_data->time_to_eat \
 				- (us_since_start(data) - data->time_last_meal));
 	return (0);
 }
