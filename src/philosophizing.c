@@ -24,18 +24,15 @@ void	*philosophizing(void *arg)
 	init(arg, &data);
 	while (1)
 	{
-		if (data->shared_data == NULL)
-			ft_fast_putstr("nonono\n");
-		if (data->shared_data->philo_count <= 1 \
-			|| eating(data) == -1 \
+		if (data->shared_data->philo_count <= 1)
+			return (arg);
+		if (eating(data) == -1 \
 			|| sleeping(data) == -1 \
 			|| thinking(data) == -1)
 		{
 			pthread_mutex_unlock(&(data)->shared_data->general_lock);
 			return (arg);
 		}
-		if (data->shared_data->philo_count % 2)
-			usleep(500);
 	}
 	return (arg);
 }
@@ -55,8 +52,8 @@ int	eating(t_local_data *data)
 	pthread_mutex_lock(&(data)->shared_data->general_lock);
 	if (data->shared_data->death_record != 0)
 	{
-		pthread_mutex_unlock(data->left_fork);
 		pthread_mutex_unlock(data->right_fork);
+		pthread_mutex_unlock(data->left_fork);
 		return (-1);
 	}
 	print_message(data, "has taken a fork\n");
@@ -92,6 +89,8 @@ int	sleeping(t_local_data *data)
 	print_message(data, "is sleeping\n");
 	pthread_mutex_unlock(&(data)->shared_data->general_lock);
 	precise_wait_us(data->shared_data->time_to_sleep);
+	if (data->shared_data->philo_count % 2)
+		usleep(500);
 	return (0);
 }
 

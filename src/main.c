@@ -25,16 +25,19 @@ void	*supervise(t_local_data **local)
 	{
 		pthread_mutex_lock(&local[0]->shared_data->general_lock);
 		tmp = update_death_record(*local);
-		pthread_mutex_unlock(&local[0]->shared_data->general_lock);
 		if (tmp != 0)
 		{
 			print_message(*(local + tmp - 1), "died\n");
+			pthread_mutex_unlock(&local[0]->shared_data->general_lock);
 			return (local);
 		}
 		if (is_done(local))
+		{
+			pthread_mutex_unlock(&local[0]->shared_data->general_lock);
 			return (local);
+		}
 		pthread_mutex_unlock(&local[0]->shared_data->general_lock);
-		usleep(500);
+		usleep(5000);
 	}
 }
 
@@ -45,7 +48,8 @@ int	is_done(t_local_data **local)
 	i = 0;
 	while (i < local[0]->shared_data->philo_count)
 	{
-		if (local[i]->meal_count < local[0]->shared_data->rounds_to_survive)
+		if (local[0]->shared_data->rounds_to_survive < 0 \
+			|| local[i]->meal_count < local[0]->shared_data->rounds_to_survive)
 			return (0);
 		i++;
 	}
@@ -66,7 +70,6 @@ int	update_death_record(t_local_data *local)
 		last_meal = local->time_last_meal;
 		time_to_die = local->shared_data->time_to_die;
 		now = us_since_start(local);
-		fflush(stdout);
 		if (last_meal && now - last_meal > time_to_die)
 		{
 			local->shared_data->death_record = local->id;

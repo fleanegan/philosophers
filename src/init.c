@@ -69,7 +69,7 @@ t_shared_data	*create_philosopher_shared_data( \
 	result->time_to_die = ft_atoi_unsigned(argv[2]) * 1000;
 	result->time_to_eat = ft_atoi_unsigned(argv[3]) * 1000;
 	result->time_to_sleep = ft_atoi_unsigned(argv[4]) * 1000;
-	result->rounds_to_survive = 1;
+	result->rounds_to_survive = -1;
 	if (argc == 6)
 		result->rounds_to_survive = ft_atoi_unsigned(argv[5]);
 	result->forks = NULL;
