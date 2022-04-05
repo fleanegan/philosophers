@@ -70,8 +70,6 @@ int	update_death_record(t_local_data **local)
 		last_meal = local[i]->time_last_meal;
 		time_to_die = local[i]->shared_data->time_to_die;
 		now = us_since_start(local[i]);
-//		if (local[i]->shared_data->time_to_die <= us_since_start( local[i]))
-//			printf("	lte: %lu, now: %u\n", local[i]->time_last_meal, us_since_start( local[i]));
 		if (last_meal && now - last_meal > time_to_die)
 		{
 			local[i]->shared_data->death_record = local[i]->id;
