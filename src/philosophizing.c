@@ -26,8 +26,7 @@ void	*philosophizing(void *arg)
 	{
 		if (data->shared_data->philo_count <= 1)
 			return (arg);
-		if ((data->meal_count >= data->shared_data->rounds_to_survive \
-			&& data->shared_data->rounds_to_survive > 0) \
+		if (data->shared_data->death_record != -1 \
 			|| thinking(data) == -1 \
 			|| eating(data) == -1 \
 			|| sleeping(data) == -1)
@@ -74,6 +73,7 @@ void	init(const void *arg, t_local_data **data)
 	pthread_mutex_lock(&(*data)->shared_data->general_lock);
 	(*data)->time_init = us_since_start(*data);
 	(*data)->time_last_meal = (*data)->time_init;
+	print_message(*data, "is thinking\n");
 	pthread_mutex_unlock(&(*data)->shared_data->general_lock);
 	if ((*data)->id % 2)
 		precise_wait_us((*data)->shared_data->time_to_eat);
@@ -98,7 +98,8 @@ int	thinking(t_local_data *data)
 	pthread_mutex_lock(&(data)->shared_data->general_lock);
 	if (data->shared_data->death_record != 0)
 		return (-1);
-	print_message(data, "is thinking\n");
+	if (data->meal_count)
+		print_message(data, "is thinking\n");
 	pthread_mutex_unlock(&(data)->shared_data->general_lock);
 	if (data->shared_data->philo_count % 2 && data->meal_count > 0)
 		usleep(2 * data->shared_data->time_to_eat \
