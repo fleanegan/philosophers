@@ -90,7 +90,6 @@ int	run_threads(t_local_data **local)
 	if (thread_ids == NULL)
 		return (1);
 	pthread_mutex_lock(&local[0]->shared_data->general_lock);
-	ft_fast_putstr("reached thread\n");
 	while (++i < local[0]->shared_data->philo_count)
 		if (pthread_create(\
 			&thread_ids[i], NULL, philosophizing, local[i]))
@@ -114,11 +113,10 @@ int	main(int argc, char **argv)
 
 	if (! is_input_valid(argc, argv))
 		return (1);
-	ft_fast_putstr("is valid\n");
 	local = set_up(argc, argv);
-	ft_fast_putstr("set up done\n");
 	if (! local)
 		return (1);
+	ft_fast_putstr("set up done\n");
 	run_threads(local);
 	destroy_muteces(local[0]->shared_data);
 	free_shared(&local[0]->shared_data);

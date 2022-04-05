@@ -24,14 +24,14 @@
 
 typedef struct s_philosopher_shared_data
 {
-	int				philo_count;
-	int				rounds_to_survive;
+	long int		philo_count;
+	long int		rounds_to_survive;
 	unsigned long	time_start;
 	unsigned long	time_to_sleep;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_die;
 	pthread_mutex_t	*forks;
-	int				death_record;
+	long int		death_record;
 	pthread_mutex_t	general_lock;
 }	t_shared_data;
 

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "../philosophers.h"
 
 int	ft_isdigit(int c)
 {
@@ -22,10 +22,19 @@ int	ft_isdigit(int c)
 int	ft_atoi_unsigned(const char *in)
 {
 	long int	res;
+	long int	res_bef;
 
 	res = 0;
 	while (ft_isdigit(*in))
+	{
+		res_bef = res;
 		res = 10 * res + (*in++ - '0');
+		if (res_bef > res)
+		{
+			ft_fast_putstr("overflow detected");
+			return (0);
+		}
+	}
 	return ((int) res);
 }
 

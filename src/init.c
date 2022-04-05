@@ -69,13 +69,17 @@ t_shared_data	*create_philosopher_shared_data( \
 	result->time_to_die = ft_atoi_unsigned(argv[2]) * 1000;
 	result->time_to_eat = ft_atoi_unsigned(argv[3]) * 1000;
 	result->time_to_sleep = ft_atoi_unsigned(argv[4]) * 1000;
+	result->rounds_to_survive = 1;
 	if (argc == 6)
 		result->rounds_to_survive = ft_atoi_unsigned(argv[5]);
-	else
-		result->rounds_to_survive = 1;
-	result->forks = malloc(sizeof(pthread_mutex_t) * result->philo_count);
-	if (! result->forks)
+	result->forks = NULL;
+	if (result->philo_count != 0)
+		result->forks = malloc(sizeof(pthread_mutex_t) * result->philo_count);
+	if (result->forks == NULL || result->time_to_die < 60000 \
+		|| result->time_to_sleep < 60000 || result->time_to_eat < 60000 \
+		|| result->rounds_to_survive == 0)
 	{
+		ft_fast_putstr("error");
 		free(result);
 		return (NULL);
 	}

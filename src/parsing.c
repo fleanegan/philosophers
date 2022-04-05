@@ -23,7 +23,7 @@ int	is_input_valid(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		ft_fast_putstr("please enter 4 or 5 parameter");
+		ft_fast_putstr("please enter 4 or 5 parameter\n");
 		return (0);
 	}
 	ctr = argc;
@@ -33,7 +33,7 @@ int	is_input_valid(int argc, char **argv)
 		if (is_trying_to_create_too_many_philosophers(ctr, current_arg) \
 			|| is_containing_non_digit_chars(current_arg))
 		{
-			ft_fast_putstr("an error occurred while generating philosophers");
+			ft_fast_putstr("an error occurred while generating philosophers\n");
 			return (0);
 		}
 	}
