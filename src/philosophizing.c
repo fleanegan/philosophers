@@ -26,13 +26,15 @@ void	*philosophizing(void *arg)
 	{
 		if (data->shared_data->philo_count <= 1)
 			return (arg);
-		if (eating(data) == -1 \
-			|| sleeping(data) == -1 \
-			|| thinking(data) == -1)
+		if (thinking(data) == -1 \
+			|| eating(data) == -1 \
+			|| sleeping(data) == -1)
 		{
 			pthread_mutex_unlock(&(data)->shared_data->general_lock);
 			return (arg);
 		}
+		if (data->shared_data->philo_count % 2)
+			usleep(500);
 	}
 	return (arg);
 }
@@ -72,7 +74,6 @@ void	init(const void *arg, t_local_data **data)
 	pthread_mutex_lock(&(*data)->shared_data->general_lock);
 	(*data)->time_init = us_since_start(*data);
 	(*data)->time_last_meal = (*data)->time_init;
-	print_message(*data, "is thinking\n");
 	pthread_mutex_unlock(&(*data)->shared_data->general_lock);
 	if ((*data)->id % 2)
 		precise_wait_us((*data)->shared_data->time_to_eat);
@@ -89,8 +90,6 @@ int	sleeping(t_local_data *data)
 	print_message(data, "is sleeping\n");
 	pthread_mutex_unlock(&(data)->shared_data->general_lock);
 	precise_wait_us(data->shared_data->time_to_sleep);
-	if (data->shared_data->philo_count % 2)
-		usleep(500);
 	return (0);
 }
 
