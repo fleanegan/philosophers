@@ -26,8 +26,7 @@ void	*philosophizing(void *arg)
 	{
 		if (data->shared_data->philo_count <= 1)
 			return (arg);
-		if (data->shared_data->death_record != -1 \
-			|| thinking(data) == -1 \
+		if (thinking(data) == -1 \
 			|| eating(data) == -1 \
 			|| sleeping(data) == -1)
 		{
